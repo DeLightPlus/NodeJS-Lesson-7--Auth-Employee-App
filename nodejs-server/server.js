@@ -30,7 +30,7 @@ app.use(cors({
 }));
 
 // Initialize Firebase Admin SDK with the service account credentials
-const serviceAccount = require('./firebase/service-key.json'); // Path to your Firebase service account file
+const serviceAccount = require('./firebase/hotel-app-service-key.json'); // Path to your Firebase service account file
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 
 // Firestore database reference
@@ -54,11 +54,10 @@ async function addSysAdminClaims(email) {
 const checkAuth = async (req, res, next) => {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
 
-    if (!token) {
-        return res.status(401).send('Unauthorized');
-    }
+    if (!token) { return res.status(401).send('Unauthorized'); }
 
-    try {
+    try 
+    {
         // Verify the Firebase ID token
         const decodedToken = await admin.auth().verifyIdToken(token);
         req.user = decodedToken;
@@ -67,12 +66,17 @@ const checkAuth = async (req, res, next) => {
         console.log('Decoded Token:', decodedToken);
 
         // Ensure the role is included in the decoded token (custom claim check)
-        if (req.user.role && ['admin', 'sysadmin'].includes(req.user.role)) {
+        if (req.user.role && ['admin', 'sysadmin'].includes(req.user.role)) 
+        {
             next();
-        } else {
+        } 
+        else 
+        {
             return res.status(403).send('Forbidden: Invalid role');
         }
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         console.error('Error verifying token:', error);
         return res.status(401).send('Unauthorized');
     }
@@ -112,9 +116,30 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// GET: Get Super Admin's email (only accessible by sysadmin)
+app.get('/super-admin', checkAuth, async (req, res) => {
+    try {
+        // Only sysadmins can access this route
+        if (req.user.role !== 'sysadmin') {
+            return res.status(403).send('Forbidden');
+        }
+
+        // You could also fetch a specific super admin's details if needed
+        // For example, if you store the super admin info in Firestore, you could query it here
+
+        // In this case, we assume the super admin's email is stored in the Firebase Authentication user's claims.
+        const userRecord = await admin.auth().getUserByEmail('matlakalakabelo1@gmail.com');  // Replace with actual email if needed
+        res.json({ email: userRecord.email });
+    } catch (error) {
+        console.error('Error fetching super admin:', error);
+        res.status(500).send('Error fetching super admin');
+    }
+});
+
 // GET: Admin users (only sysadmin can view)
 app.get('/admin-users', checkAuth, async (req, res) => {
-    try {
+    try 
+    {
         if (req.user.role !== 'sysadmin') {
             return res.status(403).send('Forbidden');
         }
@@ -123,7 +148,9 @@ app.get('/admin-users', checkAuth, async (req, res) => {
         const adminUsersSnapshot = await db.collection('users').where('role', '==', 'admin').get();
         const adminUsers = adminUsersSnapshot.docs.map(doc => doc.data());
         res.json(adminUsers);
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         console.error("Error fetching admin users:", error);
         res.status(500).send("Failed to fetch admin users");
     }
@@ -132,33 +159,117 @@ app.get('/admin-users', checkAuth, async (req, res) => {
 // POST: Add Admin (only sysadmin can add new admins)
 app.post('/add-admin', checkAuth, async (req, res) => {
     if (req.user.role !== 'sysadmin') {
-        return res.status(403).send("Not authorized");
+        return res.status(403).send('Not authorized');
     }
 
-    const { email } = req.body;
-    if (!email) {
-        return res.status(400).send("Email is required");
-      }
+    const { email, firstName, lastName, photoURL } = req.body;
+
+    if (!email || !firstName || !lastName) {
+        return res.status(400).send("Email, first name, and last name are required");
+    }
 
     try {
-        const userRecord = await admin.auth().getUserByEmail(email);
-        console.log(userRecord.uid);
-        await admin.auth().setCustomUserClaims(userRecord.uid, { role: 'admin' });
+        // Check if the email already exists in Firebase Authentication
+        const existingUser = await admin.auth().getUserByEmail(email).catch(() => null);
 
-        // Optionally, add user to Firestore as well
-        await db.collection('users').doc(userRecord.uid).set({
-            email: email,
-            role: 'admin',
-            createdAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+        if (existingUser) {
+            // If the user already exists, just update their role to admin in Firestore (if necessary)
+            const userDocRef = db.collection('users').doc(existingUser.uid);
+            await userDocRef.update({
+                role: 'admin',
+                firstName,
+                lastName,
+                photoURL: photoURL || '',
+            });
 
-        return res.status(200).send("Admin added");
+            // Update custom claims for the user (mark them as admin)
+            await admin.auth().setCustomUserClaims(existingUser.uid, { role: 'admin' });
+
+            return res.status(200).send('Admin added successfully');
+        } else {
+            // If the user doesn't exist, create a new user in Firebase Authentication
+            const userRecord = await admin.auth().createUser({
+                email,
+                emailVerified: false,
+                password: 'default-password', // You can generate a default password here
+            });
+
+            // Store the user's details in Firestore
+            const userDocRef = db.collection('users').doc(userRecord.uid);
+            await userDocRef.set({
+                email,
+                firstName,
+                lastName,
+                photoURL: photoURL || '',
+                role: 'admin', // Default role
+                uid: userRecord.uid, // Store the uid in Firestore
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            // Set custom claims (optional)
+            await admin.auth().setCustomUserClaims(userRecord.uid, { role: 'admin' });
+
+            return res.status(200).send('Admin added successfully');
+        }
     } catch (error) {
-        console.log('Error in /add-admin handler:', error);
-        return res.status(500).send("Error adding admin");
+        console.error('Error adding admin:', error);
+        res.status(500).send('Error adding admin');
     }
 });
 
+// POST: Update Admin Details
+app.post('/update-admin', checkAuth, async (req, res) => {
+    if (req.user.role !== 'sysadmin') {
+      return res.status(403).send('Not authorized');
+    }
+  
+    const { uid, firstName, lastName, photoURL } = req.body;
+  
+    try 
+    {
+      // Update user profile
+      await admin.auth().updateUser(uid, {
+        displayName: `${firstName} ${lastName}`,
+        photoURL: photoURL || '',  // Optional photo URL
+      });
+  
+      res.status(200).send('Admin updated successfully');
+    } 
+    catch (error) 
+    {
+      console.error('Error updating admin:', error);
+      res.status(500).send('Error updating admin');
+    }
+  });
+
+// POST: Remove Admin Privileges
+app.post('/remove-admin', checkAuth, async (req, res) => {
+    if (req.user.role !== 'sysadmin') {
+        return res.status(403).send('Not authorized');
+    }
+
+    const { uid } = req.body;  // Ensure 'uid' is passed here.
+
+    if (!uid) {
+        return res.status(400).send('User UID is required.');
+    }
+
+    try {
+        // Set user role to 'user'
+        await admin.auth().setCustomUserClaims(uid, { role: 'user' });
+
+        // Optionally, update Firestore to reflect the role change
+        await db.collection('users').doc(uid).update({ role: 'user' });
+
+        res.status(200).send('Admin privileges removed');
+    } catch (error) {
+        console.error('Error removing admin privileges:', error);
+        res.status(500).send('Error removing admin privileges');
+    }
+});
+
+// 
+////////////////////////////////////////////////////////////////////////////////
 // POST: Create Employee (admins/sysadmins can create employees)
 app.post('/create-employee', checkAuth, async (req, res) => {
     if (req.user.role !== 'sysadmin' && req.user.role !== 'admin') {

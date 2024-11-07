@@ -27,7 +27,8 @@ const Header = () => {
                             <img src="https://cdn.rareblocks.xyz/collection/celebration/images/logo.svg" alt="Logo" />
                         </a> */}
                         Employee App
-                    </div>                   
+                    </div> 
+
 
                     <div className="nav-links">
                         <a href="#" className="nav-link">
@@ -43,9 +44,13 @@ const Header = () => {
                     <div className="auth-links">
                         {/* <a href="#" className="nav-link">Sign up</a>
                         <a href="#" className="nav-link">Sign in</a> */}
-                        <Link className='nav-link' to="/login">Signin</Link>
-                        <Link className='nav-link' to="/signup">Signout</Link>
-                        <Link className='nav-link' to="/logout">Logout</Link>
+                        
+                        <>
+                            <Link className='nav-link' to="/login">Signin</Link>
+                            <Link className='nav-link' to="/signup">signup</Link>
+                            <Link className='nav-link' to="/logout">Logout</Link>
+                        </>
+                        
                     </div>
                 </nav>                
             </div>

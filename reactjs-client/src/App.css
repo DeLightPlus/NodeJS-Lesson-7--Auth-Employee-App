@@ -10,6 +10,42 @@
     height: 96svh;
 }
 
+
+.Admin
+{
+  display: flex;
+  flex-direction: column;
+  background: #ddd;
+  margin-top: 32px;
+  width: 86%;
+  height: 86%;
+    
+}
+
+/* Admin Info Styling */
+.admin-info {
+  display: flex;
+  align-items: center;
+}
+
+.admin-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.admin-info div {
+  font-size: 14px;
+}
+
+.admin-info strong {
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+
 .Employees
 {
     background: #ddd;

@@ -9,7 +9,9 @@ import Login from './components/auth/Login';
 import AdminPage from './components/AdminPage';
 import Logout from './components/auth/Logout';
 
-function App() {
+function App() 
+{
+  const [userEmail, setUserEmail] = useState("")
   const [token, setToken] = useState(null);
   const [employees, setEmployees] = useState([]);
 
@@ -37,13 +39,14 @@ function App() {
   return (
     <BrowserRouter>
       <div className='EmployeeApp'>
+        { console.log(userEmail) }
         <Header />
         <hr />
         <Routes>
           <Route path='/login' element={<Login setToken={setToken} />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={<AdminPage setUserEmail={setUserEmail}/>} />
           <Route path='/add-employee' element={<AddEmployee />} />
-          <Route path='/employee' element={<EmployeeList employees={employees} />} />
+          <Route path='/employees' element={<EmployeeList employees={employees} />} />
           <Route path='/logout' element={<Logout />} />
         </Routes>
       </div>

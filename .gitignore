@@ -7,6 +7,7 @@ yarn-debug.log
 yarn-error.log
 
 # Firebase Admin SDK Service Account File (Never commit this to version control)
+nodejs-server/firebase/service-key.json
 reactjs-client/src/firebase/service-key.json
 
 # React build output
