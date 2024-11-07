@@ -8,13 +8,13 @@ const Header = () => {
 
     const inputHandler = (e) => {
         const query = e.target.value.toLowerCase();
-        setSearchQuery(query);
-        const filtered = data.filter(item => 
-            item.name.toLowerCase().includes(query) || 
-            item.emailadress.toLowerCase().includes(query) ||
-            item.phonenumber.includes(query) || 
-            item.ID.toString().includes(query)
-        );
+        // setSearchQuery(query);
+        // const filtered = data.filter(item => 
+        //     item.name.toLowerCase().includes(query) || 
+        //     item.emailadress.toLowerCase().includes(query) ||
+        //     item.phonenumber.includes(query) || 
+        //     item.ID.toString().includes(query)
+        // );
         setFilteredData(filtered);
     };
 
