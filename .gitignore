@@ -1,0 +1,54 @@
+# Node.js dependencies
+/node_modules/
+client/node_modules/
+server/node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Firebase Admin SDK Service Account File (Never commit this to version control)
+reactjs-client/src/firebase/service-key.json
+
+# React build output
+/build/
+# or if using Create React App
+/dist/
+
+# .env files (this should not be committed for security reasons)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE-specific files
+/.vscode/
+/.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.swp
+*.swo
+
+# Other dependencies that shouldn't be versioned
+/.next/
+/coverage/
+/public/static/
+
+# Firebase emulators (if you are using Firebase emulators locally)
+firebase-debug.log
+firebase-error.log
+
+# Cache files
+/.cache/
+
+# Yarn lock file
+yarn.lock
+
+# Package-lock files (optional, if you p

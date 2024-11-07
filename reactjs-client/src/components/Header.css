@@ -1,0 +1,54 @@
+/* Additional styles for Header.css */
+.header
+{
+    padding: 0px 16px 0px 16px;
+    
+    width: 86%;
+    background: #ccc;
+    border-radius: 25px;
+}
+
+.header .logo
+{
+    font-size: 32px;
+    font-weight: bold;
+    margin: 8px;
+}
+
+.mobile-nav
+{
+    display: none;
+}
+
+.header .container .navbar
+{
+    display: flex;
+    flex-direction: row;
+ 
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links input 
+{
+    width: 400px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+
+.auth-links
+{
+    display: flex;
+    gap: 16px;
+}
+
+.auth-links .nav-link
+{
+   background: rgb(87, 159, 253);
+   padding: 8px;
+   border-radius: 8px;
+   color: antiquewhite;
+   font-weight: 600;
+}

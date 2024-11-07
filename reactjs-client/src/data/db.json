@@ -1,0 +1,76 @@
+{
+  "registrations": [
+    {
+      "id": "13ec",
+      "name": "mapula mashile",
+      "emailAddress": "mapule.6862@gmail.com",
+      "phoneNumber": "0736907070",
+      "position": "driver",
+      "ID": "12345",
+      "image": "http://localhost:5173/4a8f6100-cc78-49f4-872b-e2148ee9294a"
+    },
+    {
+      "id": "ad1b",
+      "name": "mapula",
+      "emailAddress": "mapule.6862@gmail.com",
+      "phoneNumber": "073690907202",
+      "position": "lijjik",
+      "ID": "12",
+      "image": "http://localhost:5173/f73055fa-4162-4acc-9914-c3f31f6e3518"
+    },
+    {
+      "id": "edf4",
+      "name": "mapula",
+      "emailAddress": "mapule.6862@gmail.com",
+      "phoneNumber": "07336909070",
+      "position": "ceo",
+      "ID": "123456",
+      "image": "http://localhost:5173/23eefb32-5b26-48f4-b498-df811e22d0eb"
+    },
+    {
+      "id": "db46",
+      "name": "mapula mashile",
+      "emailAddress": "mapule.6862@gmail.com",
+      "phoneNumber": "0736907070",
+      "position": "852",
+      "ID": "69",
+      "image": "http://localhost:5176/62b9ad84-a2f0-4f62-a6cb-31abf8a06115"
+    },
+    {
+      "id": "c548",
+      "name": "",
+      "emailAddress": "",
+      "phoneNumber": "",
+      "position": "",
+      "ID": "",
+      "image": ""
+    },
+    {
+      "id": "3e23",
+      "name": "mapula mashile",
+      "emailAddress": "mapule.6862@gmail.com",
+      "phoneNumber": "0736907070",
+      "position": "12",
+      "ID": "12",
+      "image": "http://localhost:5173/5bc86101-1b4c-4ec0-a601-8a9eb6e372ec"
+    },
+    {
+      "id": "ee20",
+      "name": "e",
+      "emailAddress": "mapule.6862@gmail.com",
+      "phoneNumber": "SXDWXQdx",
+      "position": "dwqx",
+      "ID": "dwc",
+      "image": "blob:http://localhost:5173/b05d416f-0eca-454c-8af0-78114bfcf49a"
+    },
+    {
+      "id": "947c",
+      "name": "e",
+      "emailAddress": "mapule.6862@gmail.com",
+      "phoneNumber": "SXDWXQdx",
+      "position": "dwqx",
+      "ID": "dwc",
+      "image": "blob:http://localhost:5173/f4950799-95e0-4c8b-b812-999dede6b9a3"
+    }
+  ]
+}
