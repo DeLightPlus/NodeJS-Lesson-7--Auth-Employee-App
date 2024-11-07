@@ -26,6 +26,7 @@ const Login = ({ setToken }) => {
 
       // Get Firebase ID token
       const idToken = await user.getIdToken();
+      
 
       // Send the Firebase ID token to the backend for validation
       const response = await axios.post("http://localhost:8000/login", {}, {

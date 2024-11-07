@@ -11,7 +11,6 @@ import Logout from './components/auth/Logout';
 
 function App() 
 {
-  const [userEmail, setUserEmail] = useState("")
   const [token, setToken] = useState(null);
   const [employees, setEmployees] = useState([]);
 
@@ -26,25 +25,25 @@ function App()
 
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
-    setToken(storedToken);
-    if (!storedToken) 
-    {
-      window.location.href = "/login";  // Redirect if no token
-      return;
-    }
+      setToken(storedToken);
+      
+      if (!storedToken) 
+      {
+        // window.location.href = "/login";  // Redirect if no token
+        return;
+      }
     
     //get_users();  // Fetch employees if token exists
-  }, [token]);  // Run the effect when the token changes
+    }, [token]);  // Run the effect when the token changes
 
   return (
     <BrowserRouter>
       <div className='EmployeeApp'>
-        { console.log(userEmail) }
         <Header />
         <hr />
         <Routes>
           <Route path='/login' element={<Login setToken={setToken} />} />
-          <Route path="/admin" element={<AdminPage setUserEmail={setUserEmail}/>} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path='/add-employee' element={<AddEmployee />} />
           <Route path='/employees' element={<EmployeeList employees={employees} />} />
           <Route path='/logout' element={<Logout />} />
