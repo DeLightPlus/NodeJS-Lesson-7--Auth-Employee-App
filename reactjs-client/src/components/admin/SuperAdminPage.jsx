@@ -1,10 +1,14 @@
-import "./styles.css";
+import "../styles.css";
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { auth } from '../firebase/config';
+import { auth } from '../../firebase/config';
+import TabComponent from "./TabComponent";
 
-const AdminPage = () => {
+const SuperAdminPage = () => 
+{
+  const [curTab, setCurTab] = useState("Admins")
+
   const [admins, setAdmins] = useState([]);  // State to hold the list of admin users
   const [error, setError] = useState('');    // State for error messages
   const [email, setEmail] = useState('');    // State to hold new admin's email
@@ -43,7 +47,8 @@ const AdminPage = () => {
   };
 
   // Function to add a new admin
-  const handleAddAdmin = async (e) => {
+  const handleAddAdmin = async (e) => 
+  {
     e.preventDefault(); // Prevent default form submission
 
     if (!email || !firstName || !lastName) {
@@ -86,31 +91,41 @@ const AdminPage = () => {
   };
 
   // Function to remove admin privileges
-  const handleRemoveAdmin = async (uid) => {
+  const handleRemoveAdmin = async (email) => {
+    //e.preventDefault();  // Prevent default form submission
+  
+    if (!email) {
+      setError('Please enter the email of the admin to remove');
+      return;
+    }
+  
     setLoading(true);
-    setError(''); // Reset the error message
-
+    setError('');  // Reset any existing error message
+  
     try {
       const user = auth.currentUser;  // Get the currently signed-in user
       if (user) {
         const idToken = await user.getIdToken();  // Get the Firebase ID Token
-
-        // API call to remove admin privileges (set role to 'user')
-        await axios.post('http://localhost:8000/remove-admin', { uid }, {
+  
+        // Make API call to remove the admin
+        const response = await axios.post('http://localhost:8000/remove-admin', {
+          email: email,  // Pass the email of the admin to be removed
+        }, {
           headers: {
             Authorization: `Bearer ${idToken}`,  // Add token to the Authorization header
           }
         });
-
-        console.log('Admin privileges removed');
+  
+        console.log('Admin removed:', response.data);
+        setEmail('');  // Clear the email input field
         fetchAdmins();  // Refresh the list of admins
       }
     } catch (err) {
-      setError('Error removing admin privileges: ' + err.message);
+      setError('Error removing admin: ' + err.response?.data || err.message);  // Enhanced error handling
     } finally {
       setLoading(false);  // Stop loading spinner after the request completes
     }
-  };
+  }; 
 
   // Function to update admin details
   const handleUpdateAdmin = async (uid) => {
@@ -126,7 +141,8 @@ const AdminPage = () => {
     setLoading(true);
     setError(''); // Reset the error message
 
-    try {
+    try 
+    {
       const user = auth.currentUser;  // Get the currently signed-in user
       if (user) {
         const idToken = await user.getIdToken();  // Get the Firebase ID Token
@@ -146,7 +162,9 @@ const AdminPage = () => {
         console.log('Admin updated');
         fetchAdmins();  // Refresh the list of admins
       }
-    } catch (err) {
+    } 
+    catch (err) 
+    {
       setError('Error updating admin details: ' + err.message);
     } finally {
       setLoading(false);  // Stop loading spinner after the request completes
@@ -172,7 +190,7 @@ const AdminPage = () => {
   return (
     <div className="container">
       <div className="content-header">
-        <h1>Admin Page</h1>
+        <h1>Admin Page/{curTab} |</h1>
 
         {/* Display error or success messages */}
         {error && <p className="error-message">{error}</p>}
@@ -183,7 +201,48 @@ const AdminPage = () => {
         </button>
       </div>
 
-      <div className="admin-content">
+      <div className="admin-content">        
+        
+        <div className="admin-list">
+          <TabComponent setCurTab={setCurTab}/>
+          {/* <h2>Admins List</h2> */}
+          {/* List of admin users */}
+          <ul>{console.log(admins)}
+            {admins.length === 0 ? (
+              <li>No admins found.</li>
+            ) : (
+              admins.map((admin) => (
+                <li key={admin.uid}>
+                  {console.log(admin)       }
+                  <div className="admin-info">
+                    <div style={{display:"flex"}}>
+                      <img
+                        src={admin.photoURL || 'https://via.placeholder.com/50'} // Use placeholder if no photoURL
+                        alt={`${admin.firstName} ${admin.lastName}`}
+                        className="admin-photo"
+                      />
+
+                      <div>
+                        
+                        <strong>{admin.firstName} {admin.lastName}</strong><br />
+                        <span>{admin.email}</span><br/>
+                        <small>{admin.uid}</small>
+                      </div>
+                    </div>
+
+                    <div style={{display:"flex", flexDirection:"column", gap:"8px"}}>
+                      <button onClick={() => handleUpdateAdmin(admin.uid)}>Update</button>
+                      <button onClick={() => handleRemoveAdmin(admin.email)}>Remove 
+                      {/* <small>Admin Privileges</small> */}
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+
         <div className="add-admin">
           <h2>Add New Admin</h2>
           {/* Form to add new admin */}
@@ -234,44 +293,6 @@ const AdminPage = () => {
         </div>
 
         <hr/>
-
-        <div className="admin-list">
-          <h2>Admins List</h2>
-          {/* List of admin users */}
-          <ul>{console.log(admins)}
-            {admins.length === 0 ? (
-              <li>No admins found.</li>
-            ) : (
-              admins.map((admin) => (
-                <li key={admin.uid}>
-                  {console.log(admin)       }
-                  <div className="admin-info">
-                    <div style={{display:"flex"}}>
-                      <img
-                        src={admin.photoURL || 'https://via.placeholder.com/50'} // Use placeholder if no photoURL
-                        alt={`${admin.firstName} ${admin.lastName}`}
-                        className="admin-photo"
-                      />
-
-                      <div>
-                        <small>{admin.uid}</small>
-                        <strong>{admin.firstName} {admin.lastName}</strong><br />
-                        <span>{admin.email}</span>
-                      </div>
-                    </div>
-
-                    <div style={{display:"flex", flexDirection:"column", gap:"8px"}}>
-                      <button onClick={() => handleUpdateAdmin(admin.uid)}>Update</button>
-                      <button onClick={() => handleRemoveAdmin(admin.uid)}>Remove 
-                      {/* <small>Admin Privileges</small> */}
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
       </div>
 
       <hr />
@@ -281,4 +302,4 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+export default SuperAdminPage;

@@ -6,8 +6,9 @@ import Header from './components/Header';
 import EmployeeList from './components/EmployeeList';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './components/auth/Login';
-import AdminPage from './components/AdminPage';
+import AdminPage from './components/admin/SuperAdminPage';
 import Logout from './components/auth/Logout';
+import SuperAdminPage from './components/admin/SuperAdminPage';
 
 function App() 
 {
@@ -43,6 +44,7 @@ function App()
         <hr />
         <Routes>
           <Route path='/login' element={<Login setToken={setToken} />} />
+          <Route path="/admin/super" element={<SuperAdminPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path='/add-employee' element={<AddEmployee />} />
           <Route path='/employees' element={<EmployeeList employees={employees} />} />

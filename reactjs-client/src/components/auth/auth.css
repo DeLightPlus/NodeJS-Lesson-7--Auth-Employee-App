@@ -1,0 +1,120 @@
+/* General container */
+.login-form-container 
+{
+    
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    margin-top: 8%;
+    min-height: 100vh;
+    width: 100%;
+    /* background-color: var(--bg-background);  */
+  }
+  
+  /* Card containing the form */
+  .login-form-card 
+  {
+    background-color: rgb(163, 163, 163); /* Define this in your root or use a color code */
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(34, 34, 34, 0.342);
+    max-width: 25rem;
+    width: 100%;
+    height: max-content;
+  }
+  
+  /* Title and Subtitle */
+  .login-form-title 
+  {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: whitesmoke; /* Define this color in your root or use a color code */
+    margin-bottom: 1rem;
+  }
+  
+  /* Form input fields */
+  .login-form-input-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  .login-form-label {
+    display: block;
+    color: var(--color-muted-foreground); /* Define this color in your root or use a color code */
+    margin-bottom: 0.25rem;
+  }
+  
+  .login-form-input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border); /* Define this color in your root or use a color code */
+  }
+  
+  /* Submit button */
+  .login-form-submit-button 
+  {
+    background-color: rgb(0, 110, 255); /* Define this color in your root or use a color code */
+    color: whitesmoke; /* Define this color in your root or use a color code */
+    font-weight: bold;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    transition: background-color 0.2s ease;
+  }
+  
+  .login-form-submit-button:hover 
+  {
+    background-color: rgb(90, 161, 255); /* Define this color in your root or use a color code */
+  }
+  
+  .login-form-submit-button:disabled 
+  {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+  }
+  
+  /* Error message */
+  .login-form-error 
+  {
+    color: red;
+    font-size: 0.875rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  /* Divider between login methods */
+  .login-form-divider {
+    text-align: center;
+    color: var(--color-muted-foreground); /* Define this color in your root or use a color code */
+    margin-bottom: 1.25rem;
+  }
+  
+  /* Google sign-in button */
+  .login-form-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: var(--color-primary); /* Define this color in your root or use a color code */
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    transition: background-color 0.2s ease;
+  }
+  
+  .login-form-button:hover {
+    background-color: #f4f4f4; /* Light hover effect */
+  }
+  
+  .google-icon {
+    margin-right: 0.5rem;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 640px) {
+    .login-form-card {
+      padding: 1.5rem;
+    }
+  }
+  
