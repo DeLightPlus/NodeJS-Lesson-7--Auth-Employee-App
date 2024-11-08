@@ -1,0 +1,232 @@
+Tooltips
+
+_______________________________________________________________
+Steps to Implement Admin Login with Password
+1. Frontend (React) Login Form
+In your React app, allow the admin users to log in using their email and password, then retrieve the Firebase ID token.
+
+javascript
+Copy code
+import { useState } from 'react';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import axios from 'axios';
+
+const AdminLogin = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        if (!email || !password) {
+            setError("Email and password are required");
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const auth = getAuth();
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+            // Get the Firebase ID token after successful login
+            const idToken = await userCredential.user.getIdToken();
+
+            // Make the login API request to the backend with the ID token
+            const response = await axios.post('http://localhost:8000/login', {}, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                }
+            });
+
+            const { token, role } = response.data; // Get the custom token and role from backend
+
+            // Store the token and redirect based on role
+            localStorage.setItem('adminToken', token);
+            if (role === 'sysadmin') {
+                window.location.href = '/super-admin-dashboard';  // Redirect to super-admin dashboard
+            } else if (role === 'admin') {
+                window.location.href = '/admin-dashboard';  // Redirect to general-admin dashboard
+            }
+
+        } catch (err) {
+            setError('Login failed: ' + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div>
+            <form onSubmit={handleLogin}>
+                <div>
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Logging in...' : 'Log in'}
+                </button>
+                {error && <p>{error}</p>}
+            </form>
+        </div>
+    );
+};
+
+export default AdminLogin;
+--------------------------------------------------------------------------------------------
+app.post('/login', async (req, res) => {
+    const idToken = req.headers.authorization?.split('Bearer ')[1]; // Get token from request
+
+    if (!idToken) {
+        return res.status(400).send("Authorization token is required.");
+    }
+
+    try {
+        // Decode the Firebase ID token to verify the user
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const uid = decodedToken.uid;
+
+        // Fetch user data from Firebase Authentication
+        const userRecord = await admin.auth().getUser(uid);
+
+        // Check if the user has the 'admin' role in their custom claims
+        if (userRecord.customClaims && userRecord.customClaims.role === 'sysadmin') {
+            // If the user is a super-admin, issue a custom token with admin privileges
+            const customToken = await admin.auth().createCustomToken(uid, { role: 'sysadmin' });
+            return res.json({ token: customToken, role: 'sysadmin' });
+        } else if (userRecord.customClaims && userRecord.customClaims.role === 'admin') {
+            // If the user is a general-admin, issue a custom token with admin privileges
+            const customToken = await admin.auth().createCustomToken(uid, { role: 'admin' });
+            return res.json({ token: customToken, role: 'admin' });
+        } else {
+            return res.status(403).send("Not authorized: User is not an admin");
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).send("Login failed");
+    }
+});
+--------------------------------------------------------------------------------------------------------------
+3. Role Verification and Redirect
+Once you have the custom token and the role (either 'sysadmin' or 'admin'), 
+you can redirect the user to the appropriate dashboard based on their role.
+
+4. Password Reset and Admin Recovery (Optional)
+Since you are allowing admin users to log in using their password,
+you should consider implementing a password reset mechanism if an admin forgets their password. 
+Firebase provides the sendPasswordResetEmail method to send a password reset link to the user.
+
+Example of Password Reset (React):
+javascript
+Copy code
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+
+const handlePasswordReset = async () => {
+    const auth = getAuth();
+    try {
+        await sendPasswordResetEmail(auth, email);
+        alert('Password reset email sent!');
+    } catch (error) {
+        alert('Error sending password reset email: ' + error.message);
+    }
+};
+_____________________________________________________________________________________________________________________________
+Does this mean users will log in with the password "default-password"?
+Yes, if the user hasn't changed their password or hasn't reset it, they will log in using the password default-password.
+
+This could create a security issue since a default password is not secure. A better practice would be to:
+
+Send an email for the user to reset their password immediately after creation.
+Generate a random password instead of using a fixed default password.
+Force the user to reset their password upon first login.
+Solution 1: Send Password Reset Email
+You can send a password reset email immediately after the user is created, so the user can set their own password.
+
+Here’s how you could modify your code to send a password reset email:
+
+javascript
+Copy code
+let userRecord;
+try {
+    // Try to get the user by email from Firebase Authentication
+    userRecord = await admin.auth().getUserByEmail(email);
+} catch (error) {
+    if (error.code === 'auth/user-not-found') {
+        // If the user does not exist, create the user
+        userRecord = await admin.auth().createUser({
+            email,
+            emailVerified: false,
+            password: 'default-password', // You can use a random password here
+            displayName: `${firstName} ${lastName}`,
+            photoURL: photoURL || '',
+        });
+
+        // Send a password reset email immediately after creating the user
+        await admin.auth().generatePasswordResetLink(email);
+    } else {
+        throw error; // Re-throw any other errors
+    }
+}
+After creating the user, you can send a password reset email using admin.auth().generatePasswordResetLink(email) which will send a link to the user's email, allowing them to set their own password.
+
+Solution 2: Force Password Reset on First Login
+You can also implement a strategy where users are forced to reset their password when they log in for the first time.
+
+Create the user with a default password.
+On the first login, prompt the user to reset their password.
+Solution 3: Generate a Random Password
+If you prefer generating a random password instead of using a static default one, you can use the crypto module to create a random password.
+
+Here’s how you can modify your code to generate a random password:
+
+javascript
+Copy code
+const crypto = require('crypto');
+
+// Function to generate a random password
+const generateRandomPassword = () => {
+    return crypto.randomBytes(8).toString('hex');  // Generate an 8-byte hex string as password
+};
+
+let userRecord;
+try {
+    // Try to get the user by email from Firebase Authentication
+    userRecord = await admin.auth().getUserByEmail(email);
+} catch (error) {
+    if (error.code === 'auth/user-not-found') {
+        // If the user does not exist, create the user
+        const randomPassword = generateRandomPassword();
+        
+        userRecord = await admin.auth().createUser({
+            email,
+            emailVerified: false,
+            password: randomPassword, // Use the randomly generated password
+            displayName: `${firstName} ${lastName}`,
+            photoURL: photoURL || '',
+        });
+
+        // Send a password reset email immediately after creating the user
+        await admin.auth().generatePasswordResetLink(email);
+    } else {
+        throw error; // Re-throw any other errors
+    }
+}
+This will generate a random password each time a new user is created, 
+and you can then send them a password reset link so they can set their own secure password.

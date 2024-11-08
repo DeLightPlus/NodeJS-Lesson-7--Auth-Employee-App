@@ -51,16 +51,16 @@ const Login = ({ setToken }) => {
       {
         setError("Unauthorized access: You do not have the required permissions.");
       }
-    } catch (error) {
+
+    } 
+    catch (error) 
+    {
       console.error("Login Error:", error);
-      if (error.response) {
-        setError(`Login failed: ${error.response.data || error.message}`);
-      } else {
-        setError("Login failed. Please check your internet connection and try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
+      if (error.response) 
+      { setError(`Login failed: ${error.response.data || error.message}`); } 
+      else { setError("Login failed. Please check your internet connection and try again."); }
+    } 
+    finally { setLoading(false); }
   };
 
   return (

@@ -117,7 +117,6 @@ app.post('/add-admin', checkAuth, async (req, res) => {
     }
 });
 
-
 // POST: Remove Admin (only sysadmin can remove admin rights)
 app.post('/remove-admin', checkAuth, async (req, res) => {
     if (req.user.role !== 'sysadmin') {
@@ -198,38 +197,48 @@ app.post('/update-admin', checkAuth, async (req, res) => {
     }
 });
 
-app.post('/login', async (req, res) => {
-    const idToken = req.headers.authorization?.split('Bearer ')[1]; // Get token from request
 
-    if (!idToken) {
-        return res.status(400).send("Authorization token is required.");
-    }
+app.post('/login', async (req, res) => 
+    {
+        const idToken = req.headers.authorization?.split('Bearer ')[1]; // Get token from request
 
-    try {
-        // Decode the Firebase ID token to verify the user
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
-        const uid = decodedToken.uid;
-
-        // Fetch user data from Firebase Authentication
-        const userRecord = await admin.auth().getUser(uid);
-
-        // Check if the user has the 'admin' role in their custom claims
-        if (userRecord.customClaims && userRecord.customClaims.role === 'sysadmin') {
-            // If the user is a super-admin, issue a custom token with admin privileges
-            const customToken = await admin.auth().createCustomToken(uid, { role: 'sysadmin' });
-            return res.json({ token: customToken, role: 'sysadmin' });
-        } else if (userRecord.customClaims && userRecord.customClaims.role === 'admin') {
-            // If the user is a general-admin, issue a custom token with admin privileges
-            const customToken = await admin.auth().createCustomToken(uid, { role: 'admin' });
-            return res.json({ token: customToken, role: 'admin' });
-        } else {
-            return res.status(403).send("Not authorized: User is not an admin");
+        if (!idToken) 
+        {
+            return res.status(400).send("Authorization token is required.");
         }
-    } catch (error) {
-        console.error("Login error:", error);
-        return res.status(500).send("Login failed");
-    }
-});
+
+        try {
+            // Decode the Firebase ID token to verify the user
+            const decodedToken = await admin.auth().verifyIdToken(idToken);
+            const uid = decodedToken.uid;
+
+            // Fetch user data from Firebase Authentication
+            const userRecord = await admin.auth().getUser(uid);
+
+            // Check if the user has the 'admin' role in their custom claims
+            if (userRecord.customClaims && userRecord.customClaims.role === 'sysadmin') 
+            {
+                // If the user is a super-admin, issue a custom token with admin privileges
+                const customToken = await admin.auth().createCustomToken(uid, { role: 'sysadmin' });
+                return res.json({ token: customToken, role: 'sysadmin' });
+            } 
+            else if (userRecord.customClaims && userRecord.customClaims.role === 'admin') 
+            {
+                // If the user is a general-admin, issue a custom token with admin privileges
+                const customToken = await admin.auth().createCustomToken(uid, { role: 'admin' });
+                return res.json({ token: customToken, role: 'admin' });
+            } 
+            else 
+            {
+                return res.status(403).send("Not authorized: User is not an admin");
+            }
+        } 
+        catch (error) 
+        {
+            console.error("Login error:", error);
+            return res.status(500).send("Login failed");
+        }
+    });
 
 
 

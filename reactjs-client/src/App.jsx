@@ -43,12 +43,13 @@ function App()
         <Header />
         <hr />
         <Routes>
-          <Route path='/login' element={<Login setToken={setToken} />} />
-          <Route path="/super/admin-dashboard" element={<SuperAdminPage />} />
-          <Route path="/admin-dashboard" element={<AdminPage />} />
-          <Route path='/add-employee' element={<AddEmployee />} />
-          <Route path='/employees' element={<EmployeeList employees={employees} />} />
-          <Route path='/logout' element={<Logout />} />
+          <Route path='/login' element={ <Login setToken={setToken} /> } />
+          <Route path="/super/admin-dashboard" element={ <SuperAdminPage /> } />
+          <Route path="/admin-dashboard" element={ <AdminPage /> } />
+
+          <Route path='/add-employee' element={ <AddEmployee /> } />
+          <Route path='/employees' element={ <EmployeeList employees={employees} /> } />
+          <Route path='/logout' element={ <Logout /> } />
         </Routes>
       </div>
     </BrowserRouter>
