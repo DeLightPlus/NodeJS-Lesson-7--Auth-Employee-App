@@ -44,8 +44,8 @@ function App()
         <hr />
         <Routes>
           <Route path='/login' element={<Login setToken={setToken} />} />
-          <Route path="/admin/super" element={<SuperAdminPage />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/super/admin-dashboard" element={<SuperAdminPage />} />
+          <Route path="/admin-dashboard" element={<AdminPage />} />
           <Route path='/add-employee' element={<AddEmployee />} />
           <Route path='/employees' element={<EmployeeList employees={employees} />} />
           <Route path='/logout' element={<Logout />} />

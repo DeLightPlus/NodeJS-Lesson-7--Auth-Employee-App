@@ -32,16 +32,23 @@ const Login = ({ setToken }) => {
       });
 
       // If backend returns a custom token, store it
-      if (response.data.token) {
+      if (response.data.token) 
+      {
         // Save the token in localStorage
         localStorage.setItem("authToken", response.data.token);
 
         setToken(response.data.token); // Save the token for further use
+        console.log(response.data.role);
+        
         alert("Login successful!");
 
-        // Redirect to the admin page
-        navigate("/admin/super");
-      } else {
+        if(response.data.role==="admin")          
+          navigate("/admin-dashboard");
+        else if(response.data.role==="sysadmin")
+          navigate("/super/admin-dashboard");    
+      } 
+      else 
+      {
         setError("Unauthorized access: You do not have the required permissions.");
       }
     } catch (error) {
