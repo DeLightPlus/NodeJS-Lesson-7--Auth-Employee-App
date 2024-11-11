@@ -34,8 +34,10 @@ const Login = ({ setToken }) => {
       // If backend returns a custom token, store it
       if (response.data.token) 
       {
+        const { token, role } = response.data;
         // Save the token in localStorage
-        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("adminRole", role)
 
         setToken(response.data.token); // Save the token for further use
         console.log(response.data.role);

@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import './App.css';
-import AddEmployee from './components/AddEmployee';
-import Header from './components/Header';
-import EmployeeList from './components/EmployeeList';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import './App.css';
+
+import Header from './components/Header';
+import AddEmployee from './components/AddEmployee';
+
+import EmployeeList from './components/EmployeeList';
+
 import Login from './components/auth/Login';
-import AdminPage from './components/admin/SuperAdminPage';
 import Logout from './components/auth/Logout';
 import SuperAdminPage from './components/admin/SuperAdminPage';
+import AdminPage from './components/admin/AdminPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() 
 {
@@ -37,23 +42,52 @@ function App()
     //get_users();  // Fetch employees if token exists
     }, [token]);  // Run the effect when the token changes
 
-  return (
-    <BrowserRouter>
-      <div className='EmployeeApp'>
-        <Header />
-        <hr />
-        <Routes>
-          <Route path='/login' element={ <Login setToken={setToken} /> } />
-          <Route path="/super/admin-dashboard" element={ <SuperAdminPage /> } />
-          <Route path="/admin-dashboard" element={ <AdminPage /> } />
-
-          <Route path='/add-employee' element={ <AddEmployee /> } />
-          <Route path='/employees' element={ <EmployeeList employees={employees} /> } />
-          <Route path='/logout' element={ <Logout /> } />
-        </Routes>
-      </div>
-    </BrowserRouter>
-  );
-}
+    return (
+      <BrowserRouter>
+        <div className="EmployeeApp">
+          <Header />
+          <hr />
+          <Routes>
+            <Route path='/login' element={<Login setToken={setToken} />} />
+            
+            {/* Protected routes */}
+            <Route 
+              path="/super/admin-dashboard" 
+              element={
+                <ProtectedRoute 
+                  element={<SuperAdminPage />} 
+                  allowedRoles={['sysadmin']} // Only sysadmins can access this route
+                />
+              }
+            />
+  
+            <Route 
+              path="/admin-dashboard" 
+              element={
+                <ProtectedRoute 
+                  element={<AdminPage />} 
+                  allowedRoles={['sysadmin', 'admin']} // Both sysadmin and admin can access
+                />
+              }
+            />
+  
+            <Route 
+              path="/add-employee" 
+              element={
+                <ProtectedRoute 
+                  element={<AddEmployee />} 
+                  allowedRoles={['sysadmin', 'admin']} // Only admins or sysadmins can add employees
+                />
+              }
+            />
+  
+            <Route path='/employees' element={<EmployeeList employees={employees} />} />
+            <Route path='/logout' element={<Logout />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    );
+  }
+  
 
 export default App;

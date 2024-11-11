@@ -44,7 +44,7 @@ const Header = () => {
                         {/* <a href="#" className="nav-link">Sign up</a>
                         <a href="#" className="nav-link">Sign in</a> */}
                         <Link className='nav-link' to="/login">Signin</Link>
-                        <Link className='nav-link' to="/signup">signup</Link>
+                        {/* <Link className='nav-link' to="/signup">signup</Link> */}
                         <Link className='nav-link' to="/logout">Logout</Link>
                     </div>
                 </nav>                
