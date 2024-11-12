@@ -243,53 +243,61 @@ const SuperAdminPage = () =>
           </ul>
         </div>
 
-        <div className="add-admin">
-          <h2>Add New Admin</h2>
-          {/* Form to add new admin */}
-          <form onSubmit={handleAddAdmin}>
-            <div>
-              <label htmlFor="email">Admin Email:</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)} // Update the email state
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="firstName">First Name:</label>
-              <input
-                type="text"
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)} // Update the first name state
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName">Last Name:</label>
-              <input
-                type="text"
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)} // Update the last name state
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="photoURL">Photo URL (optional):</label>
-              <input
-                type="text"
-                id="photoURL"
-                value={photoURL}
-                onChange={(e) => setPhotoURL(e.target.value)} // Update the photo URL state
-              />
-            </div>
-            <button type="submit" disabled={loading}>
-              {loading ? 'Adding Admin...' : 'Add Admin'}
-            </button>
-          </form>
+        <div className="add-modal">
+
+          <div className="add-admin">
+            <h2>Add New 
+              <select name="" id="">
+                <option value="admin">Admin</option>
+                <option value="employee">Employee</option>
+              </select></h2><hr/>
+            {/* Form to add new admin */}
+            <form onSubmit={handleAddAdmin}>
+              <div>
+                <label htmlFor="email">Email:</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)} // Update the email state
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="firstName">First Name:</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)} // Update the first name state
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="lastName">Last Name:</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)} // Update the last name state
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="photoURL">Photo URL (optional):</label>
+                <input
+                  type="text"
+                  id="photoURL"
+                  value={photoURL}
+                  onChange={(e) => setPhotoURL(e.target.value)} // Update the photo URL state
+                />
+              </div>
+              <button type="submit" disabled={loading}>
+                {loading ? 'Adding Admin...' : 'Add Admin'}
+              </button>
+            </form>
+          </div>
+
         </div>
 
         <hr/>

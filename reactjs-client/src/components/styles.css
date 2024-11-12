@@ -1,0 +1,13 @@
+.add-modal
+{
+    position: absolute;
+    top: 12%;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(245, 245, 245, 0.86);
+    width: 100svw;
+    height: 86svh;
+    /* backdrop-filter: blur(0px); */
+}

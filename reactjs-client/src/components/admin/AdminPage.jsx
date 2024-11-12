@@ -1,7 +1,11 @@
+import AddEmployee from "../AddEmployee";
+
 const AdminPage = () => {
     return ( 
     <>
-        <h1>Admin</h1>
+        
+
+        <AddEmployee />
     </> 
     );
 }
