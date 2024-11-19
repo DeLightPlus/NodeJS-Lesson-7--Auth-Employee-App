@@ -27,6 +27,7 @@ function AddEmployee() {
                 {
                     headers: { "Content-Type": "multipart/form-data", }
             }); 
+            
             const data = response.data;
             setSubmittedData(employee);
             clearForm();
@@ -75,9 +76,10 @@ function AddEmployee() {
         }
     };
 
+    // Only call get_users once when the component mounts
     useEffect(() => {
         get_users();
-    }, [employees]);
+    }, []);  // Empty dependency array to prevent infinite loop
 
     return (
         <div className="Employees">

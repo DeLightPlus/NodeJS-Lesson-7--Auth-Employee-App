@@ -265,14 +265,112 @@ app.post('/api/employees', checkAuth, async (req, res) => {
                 email,
                 role,
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                addedBy: req.user.id
             });
 
-            return res.status(201).json({ id: employeeRef.id, firstName, lastName, email, role });
-        } catch (error) {
+            return res.status(201).json({
+                id: employeeRef.id,
+                firstName,
+                lastName,
+                email,
+                role,
+                addedBy: req.user.id,  // Include the user who added the employee in the response
+            });
+
+        } 
+        catch (error) 
+        {
             console.error('Error adding employee:', error);
             return res.status(500).send("Error adding employee.");
         }
     });
+
+// API endpoint to get all employees
+app.get('/api/employees', checkAuth, async (req, res) => {
+    try {
+        // Fetch all employees from the Firestore collection
+        const snapshot = await db.collection('employees').get();
+
+        // If no employees are found, return a 404 error
+        if (snapshot.empty) {
+            return res.status(404).send("No employees found.");
+        }
+
+        // Map the documents to a plain object array
+        const employees = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+
+        // Return the list of employees in the response
+        return res.status(200).json(employees);
+    } catch (error) {
+        console.error('Error fetching employees:', error);
+        return res.status(500).send("Error fetching employees.");
+    }
+});
+
+
+// // API endpoint to get all employees, optionally filtered by admin (addedBy)
+// app.get('/api/employees', checkAuth, async (req, res) => {
+//     try 
+//     {
+//         const { addedBy } = req.query;  // Get the optional 'addedBy' filter from the query params
+
+//         // Start the Firestore query
+//         let query = db.collection('employees');
+
+//         // If 'addedBy' is specified, filter by the admin who added the employee
+//         if (addedBy) {
+//             query = query.where('addedBy', '==', addedBy);
+//         }
+
+//         // Fetch the employees
+//         const snapshot = await query.get();
+
+//         if (snapshot.empty) {
+//             return res.status(404).send("No employees found.");
+//         }
+
+//         // Map the documents to a plain object
+//         const employees = snapshot.docs.map(doc => ({
+//             id: doc.id,
+//             ...doc.data(),
+//         }));
+
+//         return res.status(200).json(employees);
+
+//     } catch (error) {
+//         console.error('Error fetching employees:', error);
+//         return res.status(500).send("Error fetching employees.");
+//     }
+// });
+
+// API endpoint to get a specific employee by ID (with addedBy field)
+app.get('/api/employees/:id', checkAuth, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Fetch the employee by ID
+        const employeeDoc = await db.collection('employees').doc(id).get();
+
+        if (!employeeDoc.exists) {
+            return res.status(404).send("Employee not found.");
+        }
+
+        // Get the employee data and include the addedBy field
+        const employee = employeeDoc.data();
+        return res.status(200).json({
+            id: employeeDoc.id,
+            ...employee,
+        });
+
+    } catch (error) {
+        console.error('Error fetching employee by ID:', error);
+        return res.status(500).send("Error fetching employee.");
+    }
+});
+
 
 
 

@@ -29,7 +29,7 @@ const Header = () => {
                         Employee App
                     </div>                   
 
-                    <div className="nav-links">
+                    {/* <div className="nav-links">
                         <a href="#" className="nav-link">
                             <input
                                 type="text"
@@ -38,7 +38,7 @@ const Header = () => {
                                 value={searchQuery}
                             />
                         </a>                        
-                    </div>
+                    </div> */}
 
                     <div className="auth-links">
                         {/* <a href="#" className="nav-link">Sign up</a>

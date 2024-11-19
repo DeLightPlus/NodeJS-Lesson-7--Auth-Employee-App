@@ -1,13 +1,22 @@
 .add-modal
 {
     position: absolute;
-    top: 12%;
+    top: 10%;
     left: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background: rgba(245, 245, 245, 0.86);
     width: 100svw;
     height: 86svh;
     /* backdrop-filter: blur(0px); */
+}
+
+.Add-Btn 
+{
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid cornsilk;
+    color: cornsilk;
 }
