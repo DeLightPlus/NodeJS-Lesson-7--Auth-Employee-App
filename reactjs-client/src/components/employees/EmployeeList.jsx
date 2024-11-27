@@ -2,7 +2,9 @@
 import React from 'react';
 import EmployeeCard from './EmployeeCard';
 
-const EmployeeList = ({ employees }) => {
+const EmployeeList = ({ employees, get_users }) => {
+
+    
   return (
     <div className="employee_list">
       { employees &&

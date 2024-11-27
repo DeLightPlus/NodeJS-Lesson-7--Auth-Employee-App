@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import './Header.css'; // Import your CSS file
 import { Link } from 'react-router-dom';
+import { auth } from '../../firebase/config';
 
-const Header = () => {
+const Header = ({user}) => {
+    const _user = auth.currentUser;
+
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredData, setFilteredData] = useState([]);
 
-    const inputHandler = (e) => {
+    const inputHandler = (e) => 
+    {
         const query = e.target.value.toLowerCase();
         setSearchQuery(query);
         const filtered = data.filter(item => 
@@ -20,6 +24,8 @@ const Header = () => {
 
     return (
         <header className="header">
+            {console.log(user)
+            }
             <div className="container">
                 <nav className="navbar">
                     <div className="logo">
@@ -43,9 +49,14 @@ const Header = () => {
                     <div className="auth-links">
                         {/* <a href="#" className="nav-link">Sign up</a>
                         <a href="#" className="nav-link">Sign in</a> */}
-                        <Link className='nav-link' to="/login">Signin</Link>
+                        {}
+                        { !user && <Link className='nav-link' to="/login">Signin</Link> }
                         {/* <Link className='nav-link' to="/signup">signup</Link> */}
-                        <Link className='nav-link' to="/logout">Logout</Link>
+                        { user && 
+                            <>
+                                <Link className='nav-link' to="/profile">{user.email}</Link>
+                                <Link className='nav-link' to="/logout">Logout</Link>
+                            </> }   
                     </div>
                 </nav>                
             </div>

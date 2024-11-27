@@ -4,6 +4,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import './App.css';
 
+import { auth } from './firebase/config';
+
 import Header from './components/Header/Header';
 import AddEmployee from './components/employees/AddEmployee';
 
@@ -15,8 +17,10 @@ import SuperAdminPage from './components/admin/SuperAdminPage';
 import AdminPage from './components/admin/AdminPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
+
 function App() 
-{
+{   
+  const [user, setUser] = useState(auth.currentUser);
   const [token, setToken] = useState(null);
   const [employees, setEmployees] = useState([]);
 
@@ -30,22 +34,27 @@ function App()
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("authToken");
-      setToken(storedToken);
+      const storedToken = localStorage.getItem("authToken");
+      const _user = JSON.parse( localStorage.getItem("user") );      
       
-      if (!storedToken) 
+      if (!storedToken && !_user) 
       {
         // window.location.href = "/login";  // Redirect if no token
+        setUser(null)
         return;
       }
+
+      setToken(storedToken);
+      setUser(_user)
     
     //get_users();  // Fetch employees if token exists
     }, [token]);  // Run the effect when the token changes
 
     return (
       <BrowserRouter>
-        <div className="EmployeeApp">
-          <Header />
+        <div className="EmployeeApp"> 
+          {/* { console.log("user", user) } */}
+          <Header user={user} />
           <hr />
           <Routes>
             <Route path='/login' element={<Login setToken={setToken} />} />

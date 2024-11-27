@@ -38,6 +38,7 @@ const Login = ({ setToken }) => {
         // Save the token in localStorage
         localStorage.setItem("authToken", token);
         localStorage.setItem("adminRole", role)
+        localStorage.setItem("user", JSON.stringify(user))
 
         setToken(response.data.token); // Save the token for further use
         console.log(response.data.role);

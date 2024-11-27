@@ -3,27 +3,26 @@ import axios from "axios";
 import EmployeeCard from "./EmployeeCard";
 import { auth } from "../../firebase/config";
 
-function AddEmployee() 
-{
-    
+function AddEmployee({ employees, get_users }) 
+{   
 
     const [employeeId, setEmployeeId] = useState("");
     const [name, setName] = useState("");
     const [email, setEmailAddress] = useState("");
     const [phone, setPhoneNumber] = useState("");
-
     const [img_url, setImageUrl] = useState("");
     const [image, setImage] = useState("");
-
     const [position, setPosition] = useState("");
-    const [submittedData, setSubmittedData] = useState(null);
-    const [employees, setEmployees] = useState([]);
+
+    const [submittedData, setSubmittedData] = useState(null); 
     const [errors, setErrors] = useState({});
+
+  
 
     const handleSubmits = async (e) => {
         e.preventDefault();
 
-        const employee = { employeeId, name, email, phone, position, image };
+        const employee = { employeeId, name, email, phone, position, image_url: img_url };
         const user = auth.currentUser;
 
         try 
@@ -36,15 +35,14 @@ function AddEmployee()
                 
             const data = response.data;
             setSubmittedData(employee);
+            get_users();
             clearForm();
         } 
         catch (error) 
         {
             console.error("Error adding employee:", error);
         }
-    };
-
-    
+    };    
 
     const handleImageChange = (e) => {
         if (e.target.files[0]) {
@@ -74,43 +72,14 @@ function AddEmployee()
         setErrors({});
     };
 
-    const get_users = async () => 
-    {
+    
 
-        const user = auth.currentUser;
-         
-        try 
-        {
-            if (user) 
-            {
-                const idToken = await user.getIdToken();
-                const response = await axios.get("http://localhost:8000/api/employees", {
-                    headers: {
-                      Authorization: `Bearer ${idToken}`,  // Send token in the Authorization header
-                    }
-                  });
-
-                console.log('res.data | employees: ', response);
-                  
-                const data = response.data;
-                setEmployees(data);
-            }
-
-        }
-        catch (error) 
-        {
-            console.error("Error fetching employees:", error);
-        }
-    };
-
-    // Only call get_users once when the component mounts
-    useEffect(() => {
-        get_users();
-    }, []);  // Empty dependency array to prevent infinite loop
-
+   
     return (
-        <div className="Employees">
+        
+             <>
             <div className="AddEmployees">
+                
                 <EmployeeCard employee={{ employeeId, name, email, phone, position, img_url }} />
                 <div className="form-container">
                     <h2>Add Employee</h2><hr/>
@@ -191,7 +160,10 @@ function AddEmployee()
                     </form>
                 </div>            
             </div>
-        </div>
+           
+                
+                </>
+        
     );
 }
 

@@ -246,44 +246,56 @@ app.post('/login', async (req, res) =>
 /* ******************************************************************* */
 // Add employee route (POST request to add employee)
 app.post('/api/employees', checkAuth, async (req, res) => {
-        // Only allow admins or sysadmins to add employees
-        if (req.user.role !== 'admin' && req.user.role !== 'sysadmin') {
-            return res.status(403).send("Not authorized");
-        }
+    // Only allow admins or sysadmins to add employees
+    if (req.user.role !== 'admin' && req.user.role !== 'sysadmin') {
+        return res.status(403).send("Not authorized");
+    }
+    console.log("req.body: ", req.body);
+    console.log("user: ", req.user.uid);
+    
+    
 
-        const { firstName, lastName, email, role } = req.body;
+    const { employeeId, name, email, phone, position, image_url } = req.body;
 
-        if (!firstName || !lastName || !email || !role) {
-            return res.status(400).send("All fields (firstName, lastName, email, role) are required.");
-        }
+    // Check that all required fields are provided
+    if (!name || !email || !position || !phone) {
+        return res.status(400).send("All fields (name, email, phone, position) are required.");
+    }
 
-        try {
-            // Add employee to Firestore or a database of your choice
-            const employeeRef = await db.collection('employees').add({
-                firstName,
-                lastName,
-                email,
-                role,
-                createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                addedBy: req.user.id
-            });
+    // Split the name into firstName and lastName
+    // If the name has a space, consider the remaining part as the last name
 
-            return res.status(201).json({
-                id: employeeRef.id,
-                firstName,
-                lastName,
-                email,
-                role,
-                addedBy: req.user.id,  // Include the user who added the employee in the response
-            });
+    try 
+    {
+        // Add employee to Firestore or a database of your choice
+        const employeeRef = await db.collection('employees').add({
+            employeeId,          // Store employeeId if needed
+            name,
+            email,
+            phone,
+            position,
+            image_url,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            addedBy: req.user.uid  // ID of the user who added the employee
+        });
 
-        } 
-        catch (error) 
-        {
-            console.error('Error adding employee:', error);
-            return res.status(500).send("Error adding employee.");
-        }
-    });
+        return res.status(201).json({
+            id: employeeRef.id,
+            name,
+            email,
+            phone,
+            position,
+            image_url,
+            addedBy: req.user.uid,  // Include the user who added the employee in the response
+        });
+
+    } 
+    catch (error) 
+    {
+        console.error('Error adding employee:', error);
+        return res.status(500).send("Error adding employee.");
+    }
+});
 
 // API endpoint to get all employees, optionally filtered by admin (addedBy)
 app.get('/api/employees', checkAuth, async (req, res) => {
