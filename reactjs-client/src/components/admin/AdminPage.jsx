@@ -1,4 +1,4 @@
-import AddEmployee from "../AddEmployee";
+import AddEmployee from "../employees/AddEmployee";
 
 const AdminPage = () => {
     return ( 

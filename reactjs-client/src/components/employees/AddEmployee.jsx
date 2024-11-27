@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import EmployeeCard from "./EmployeeCard";
+import { auth } from "../../firebase/config";
 
-function AddEmployee() {
+function AddEmployee() 
+{
+    
+
     const [employeeId, setEmployeeId] = useState("");
     const [name, setName] = useState("");
     const [email, setEmailAddress] = useState("");
@@ -20,18 +24,22 @@ function AddEmployee() {
         e.preventDefault();
 
         const employee = { employeeId, name, email, phone, position, image };
-        
-        try {
-            
+        const user = auth.currentUser;
+
+        try 
+        {           
+            const idToken = await user.getIdToken(); 
             const response = await axios.post("http://localhost:8000/api/employees", employee , 
                 {
-                    headers: { "Content-Type": "multipart/form-data", }
-            }); 
-            
+                    headers: { Authorization: `Bearer ${idToken}` }
+                }); 
+                
             const data = response.data;
             setSubmittedData(employee);
             clearForm();
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error("Error adding employee:", error);
         }
     };
@@ -66,12 +74,31 @@ function AddEmployee() {
         setErrors({});
     };
 
-    const get_users = async () => {
-        try {
-            const response = await axios.get("http://localhost:8000/api/employees");
-            const data = response.data;
-            setEmployees(data);
-        } catch (error) {
+    const get_users = async () => 
+    {
+
+        const user = auth.currentUser;
+         
+        try 
+        {
+            if (user) 
+            {
+                const idToken = await user.getIdToken();
+                const response = await axios.get("http://localhost:8000/api/employees", {
+                    headers: {
+                      Authorization: `Bearer ${idToken}`,  // Send token in the Authorization header
+                    }
+                  });
+
+                console.log('res.data | employees: ', response);
+                  
+                const data = response.data;
+                setEmployees(data);
+            }
+
+        }
+        catch (error) 
+        {
             console.error("Error fetching employees:", error);
         }
     };
@@ -87,7 +114,7 @@ function AddEmployee() {
                 <EmployeeCard employee={{ employeeId, name, email, phone, position, img_url }} />
                 <div className="form-container">
                     <h2>Add Employee</h2><hr/>
-                    {/* {console.log(image,' vs url:', img_url) } */}
+                    { console.log(employees,' | employees') }
                     <form onSubmit={handleSubmits}>
                         <label>
                             ID:

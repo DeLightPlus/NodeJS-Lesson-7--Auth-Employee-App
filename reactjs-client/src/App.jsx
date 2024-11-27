@@ -4,10 +4,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import './App.css';
 
-import Header from './components/Header';
-import AddEmployee from './components/AddEmployee';
+import Header from './components/Header/Header';
+import AddEmployee from './components/employees/AddEmployee';
 
-import EmployeeList from './components/EmployeeList';
+import EmployeeList from './components/employees/EmployeeList';
 
 import Login from './components/auth/Login';
 import Logout from './components/auth/Logout';
@@ -23,7 +23,7 @@ function App()
   const get_users = async () => {
     try 
     {
-      const response = await axios.get("http://localhost:8000/api/employees");
+      const response = await axios.get(`http://localhost:8000/api/employees?createdBy=${token}`);
       setEmployees(response.data);
     } 
     catch (error) { console.error("Error fetching employees:", error);  }

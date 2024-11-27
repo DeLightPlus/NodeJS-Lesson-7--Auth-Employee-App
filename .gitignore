@@ -1,14 +1,15 @@
 # Node.js dependencies
 /node_modules/
-client/node_modules/
-server/node_modules/
+/reactjs-client/node_modules/
+/nodejs-server/node_modules/
+
 npm-debug.log
 yarn-debug.log
 yarn-error.log
 
 # Firebase Admin SDK Service Account File (Never commit this to version control)
-nodejs-server/firebase/service-key.json
-reactjs-client/src/firebase/service-key.json
+/nodejs-server/firebase/service-key.json
+/reactjs-client/src/firebase/service-key.json
 
 # React build output
 /build/
@@ -16,7 +17,10 @@ reactjs-client/src/firebase/service-key.json
 /dist/
 
 # .env files (this should not be committed for security reasons)
+/reactjs-client/.env
+/nodejs-server-client/.env
 .env
+
 .env.local
 .env.development
 .env.test
