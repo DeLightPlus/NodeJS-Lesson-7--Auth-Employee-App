@@ -285,66 +285,40 @@ app.post('/api/employees', checkAuth, async (req, res) => {
         }
     });
 
-// API endpoint to get all employees
+// API endpoint to get all employees, optionally filtered by admin (addedBy)
 app.get('/api/employees', checkAuth, async (req, res) => {
-    try {
-        // Fetch all employees from the Firestore collection
-        const snapshot = await db.collection('employees').get();
+    try 
+    {
+        const { addedBy } = req.query;  // Get the optional 'addedBy' filter from the query params
 
-        // If no employees are found, return a 404 error
+        // Start the Firestore query
+        let query = db.collection('employees');
+
+        // If 'addedBy' is specified, filter by the admin who added the employee
+        if (addedBy) {
+            query = query.where('addedBy', '==', addedBy);
+        }
+
+        // Fetch the employees
+        const snapshot = await query.get();
+
         if (snapshot.empty) {
             return res.status(404).send("No employees found.");
         }
 
-        // Map the documents to a plain object array
+        // Map the documents to a plain object
         const employees = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
         }));
 
-        // Return the list of employees in the response
         return res.status(200).json(employees);
+
     } catch (error) {
         console.error('Error fetching employees:', error);
         return res.status(500).send("Error fetching employees.");
     }
 });
-
-
-// // API endpoint to get all employees, optionally filtered by admin (addedBy)
-// app.get('/api/employees', checkAuth, async (req, res) => {
-//     try 
-//     {
-//         const { addedBy } = req.query;  // Get the optional 'addedBy' filter from the query params
-
-//         // Start the Firestore query
-//         let query = db.collection('employees');
-
-//         // If 'addedBy' is specified, filter by the admin who added the employee
-//         if (addedBy) {
-//             query = query.where('addedBy', '==', addedBy);
-//         }
-
-//         // Fetch the employees
-//         const snapshot = await query.get();
-
-//         if (snapshot.empty) {
-//             return res.status(404).send("No employees found.");
-//         }
-
-//         // Map the documents to a plain object
-//         const employees = snapshot.docs.map(doc => ({
-//             id: doc.id,
-//             ...doc.data(),
-//         }));
-
-//         return res.status(200).json(employees);
-
-//     } catch (error) {
-//         console.error('Error fetching employees:', error);
-//         return res.status(500).send("Error fetching employees.");
-//     }
-// });
 
 // API endpoint to get a specific employee by ID (with addedBy field)
 app.get('/api/employees/:id', checkAuth, async (req, res) => {
@@ -370,11 +344,6 @@ app.get('/api/employees/:id', checkAuth, async (req, res) => {
         return res.status(500).send("Error fetching employee.");
     }
 });
-
-
-
-
-
 
 // Start the server
 app.listen(port, () => {
